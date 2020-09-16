@@ -6,13 +6,11 @@ const {
 } = require("express");
 const mongodb = require("mongodb");
 const mongoClient = mongodb.MongoClient;
-const url = "mongodb://localhost:27017/";
-// mongodb+srv://bharani:<password>@cluster0.jsd3k.mongodb.net/<dbname>?retryWrites=true&w=majority
-
+const url = "mongodb+srv://bharani:DF8b4vOeqVVIchCQ@cluster0.jsd3k.mongodb.net?retryWrites=true&w=majority";
 const cors = require("cors");
 
 app.use(cors({
-    origin: "http://127.0.0.1:5500"
+    origin: "https://assign-mentor-bharani.netlify.app/"
 }))
 
 app.use(bodyParser.json());
@@ -143,7 +141,7 @@ app.put("/update/:mentorName", async function (req, res) {
                 name: req.params.mentorName
             },
             {
-                $push : {
+                $addToSet : {
                     students : req.body.student
                 }
             });
@@ -156,6 +154,16 @@ app.put("/update/:mentorName", async function (req, res) {
             {
                 $pull : {
                     students : req.body.student
+                }
+            });
+
+            await db
+            .collection("students")
+            .updateMany({
+                name:  req.body.student
+            }, {
+                $set: {
+                    mentor: req.params.mentorName
                 }
             });
             
