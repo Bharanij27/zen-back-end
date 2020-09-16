@@ -9,9 +9,9 @@ const mongoClient = mongodb.MongoClient;
 const url = "mongodb+srv://bharani:DF8b4vOeqVVIchCQ@cluster0.jsd3k.mongodb.net?retryWrites=true&w=majority";
 const cors = require("cors");
 
-// app.use(cors({
-//     origin: "https://assign-mentor-bharani.netlify.app"
-// }))
+app.use(cors({
+    origin: "https://assign-mentor-bharani.netlify.app"
+}))
 
 app.use(bodyParser.json());
 
