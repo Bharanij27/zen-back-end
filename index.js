@@ -98,7 +98,7 @@ app.put("/assign/:studentName", async function (req, res) {
         await db
             .collection("students")
             .findOneAndUpdate({
-                name : req.params.studentName //student id
+                name: req.params.studentName //student id
             }, {
                 $set: {
                     mentor: req.body.mentorName
@@ -129,48 +129,45 @@ app.put("/update/:mentorName", async function (req, res) {
         let db = client.db("zenClass");
 
         let student = await db
-        .collection("students")
-        .findOne({
-            name: req.body.student
-        });
-        console.log(student);
+            .collection("students")
+            .findOne({
+                name: req.body.student
+            });
 
-        let a = await db
-            .collection("mentor")
+        await db
+            .collection("mentors")
             .findOneAndUpdate({
                 name: req.params.mentorName
-            },
-            {
-                $addToSet : {
-                    students : req.body.student
+            }, {
+                $addToSet: {
+                    students: req.body.student
                 }
             });
-
-            let b = await db
-            .collection("mentor")
-            .findOneAndUpdate({
-                name: student.mentor
-            },
-            {
-                $pull : {
-                    students : req.body.student
-                }
-            });
-
+        if (student.mentor) {
             await db
+                .collection("mentors")
+                .findOneAndUpdate({
+                    name: student.mentor
+                }, {
+                    $pull: {
+                        students: req.body.student
+                    }
+                });
+        }
+
+        await db
             .collection("students")
-            .updateMany({
-                name:  req.body.student
+            .findOneAndUpdate({
+                name: req.body.student
             }, {
                 $set: {
                     mentor: req.params.mentorName
                 }
             });
-            
-            client.close();
-            res.json("Success");
-            console.log(a, b)
-        } catch (error) {
+
+        client.close();
+        res.json("Success");
+    } catch (error) {
         console.log(error);
         res.json("Something went wrong");
     }
